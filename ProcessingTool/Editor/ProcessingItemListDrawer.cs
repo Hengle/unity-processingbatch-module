@@ -19,6 +19,7 @@ namespace ProcessingTool
                 return property.serializedObject.targetObject as ProcessingBehaiver;
             }
         }
+        private List<GameObject> dragedGameObjects = new List<GameObject>();
 
         protected override void DrawElementCallBack(Rect rect, int index, bool isActive, bool isFocused)
         {
@@ -94,6 +95,37 @@ namespace ProcessingTool
         public override void DoLayoutList()
         {
             base.DoLayoutList();
+            var rect = ProcessingUtil.GetDragRect();
+            if (Event.current.type == EventType.DragUpdated && rect.Contains(Event.current.mousePosition))
+            {
+                ProcessingUtil.UpdateDragedGameObjectsFromScene(dragedGameObjects);
+                if (dragedGameObjects.Count == 0)
+                {
+                    ProcessingUtil.UpdateDragedObjectsFromFile(".prefab", dragedGameObjects);
+                }
+            }
+            else if (Event.current.type == EventType.dragPerform && rect.Contains(Event.current.mousePosition))
+            {
+                foreach (var item in dragedGameObjects)
+                {
+                    if(!ProcessingUtil.HaveItem(property,"item",item))
+                    {
+                       var prop = property.AddItem();
+                        SetProperty(prop, item);
+                    }
+                    else
+                    {
+                        Debug.Log("already exists:" + item);
+                    }
+                }
+            }
+        }
+
+        private void SetProperty(SerializedProperty prop,GameObject item)
+        {
+            if (prop == null || item == null) return;
+            prop.FindPropertyRelative("item").objectReferenceValue = item;
+            prop.FindPropertyRelative("path").stringValue = CalcutePath(item);
         }
 
         //计算路径

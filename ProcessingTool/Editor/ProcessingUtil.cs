@@ -41,6 +41,26 @@ namespace ProcessingTool
                 return EditorGUIUtility.isProSkin ? Color.cyan : Color.white;
             }
         }
+        public static SerializedProperty AddItem(this SerializedProperty arrayProp)
+        {
+            var size = arrayProp.arraySize;
+            arrayProp.InsertArrayElementAtIndex(size);
+            return arrayProp.GetArrayElementAtIndex(size);
+        }
+
+        public static bool HaveItem(SerializedProperty property, string path, UnityEngine.Object obj)
+        {
+            for (int i = 0; i < property.arraySize; i++)
+            {
+                var prop = property.GetArrayElementAtIndex(i).FindPropertyRelative(path);
+                var item = prop.objectReferenceValue;
+                if (item == obj)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         /// <summary>
         /// 手动把脚本绘制出来
@@ -53,27 +73,51 @@ namespace ProcessingTool
             EditorGUI.EndDisabledGroup();
         }
         /// <summary>
-        /// address: ".prefab"
+        /// 更新从场景拖入的gameObject
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="address"></param>
         /// <param name="dragedGameObject"></param>
-        public static void UpdateDragedObjects<T>(string address, List<T> dragedGameObject) where T : UnityEngine.Object
+        public static void UpdateDragedGameObjectsFromScene(List<GameObject> dragedGameObject)
         {
             dragedGameObject.Clear();
             foreach (var item in DragAndDrop.objectReferences)
             {
+                if (item is GameObject)
+                {
+                    var path = AssetDatabase.GetAssetPath(item);
+                    if (string.IsNullOrEmpty(path) && !dragedGameObject.Contains(item as GameObject))
+                    {
+                        dragedGameObject.Add(item as GameObject);
+                    }
+                    else
+                    {
+                        Debug.Log("ignre:" + item);
+                    }
+                }
+            }
+            DragAndDrop.visualMode = dragedGameObject.Count > 0 ? DragAndDropVisualMode.Move : DragAndDropVisualMode.Rejected;
+        }
+        /// <summary>
+        /// address: ".prefab"
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="address"></param>
+        /// <param name="dragedObjects"></param>
+        public static void UpdateDragedObjectsFromFile<T>(string address, List<T> dragedObjects) where T : UnityEngine.Object
+        {
+            dragedObjects.Clear();
+            foreach (var item in DragAndDrop.objectReferences)
+            {
                 if (item is T)
                 {
-                    dragedGameObject.Add(item as T);
+                    dragedObjects.Add(item as T);
                 }
                 else if (ProjectWindowUtil.IsFolder(item.GetInstanceID()))
                 {
                     var folder = AssetDatabase.GetAssetPath(item);
-                    SearchDeep(folder, address, dragedGameObject);
+                    SearchDeep(folder, address, dragedObjects);
                 }
             }
-            DragAndDrop.visualMode = dragedGameObject.Count > 0 ? DragAndDropVisualMode.Move : DragAndDropVisualMode.Rejected;
+            DragAndDrop.visualMode = dragedObjects.Count > 0 ? DragAndDropVisualMode.Move : DragAndDropVisualMode.Rejected;
         }
 
         public static void SearchDeep<T>(string folder, string address, List<T> list) where T : UnityEngine.Object
