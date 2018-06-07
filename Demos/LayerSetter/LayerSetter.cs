@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
-using ProcessingTool;
+using ProcessingBatch;
 using System;
 
 public class LayerSetter : ProcessingLogic

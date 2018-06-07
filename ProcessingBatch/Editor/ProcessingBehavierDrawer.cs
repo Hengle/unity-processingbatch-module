@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 
-namespace ProcessingTool
+namespace ProcessingBatch
 {
     [CustomEditor(typeof(ProcessingBehaiver))]
     public class ProcessingBehavierDrawer : Editor

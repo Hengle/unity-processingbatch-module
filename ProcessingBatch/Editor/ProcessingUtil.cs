@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
-namespace ProcessingTool
+namespace ProcessingBatch
 {
     public static class ProcessingUtil
     {

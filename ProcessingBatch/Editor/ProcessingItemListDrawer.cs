@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System;
 using UnityEditor;
 
-namespace ProcessingTool
+namespace ProcessingBatch
 {
     public class ProcessingItemListDrawer : ReorderListDrawer
     {
