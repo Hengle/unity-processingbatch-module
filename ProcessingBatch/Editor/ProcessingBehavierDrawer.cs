@@ -57,12 +57,25 @@ namespace ProcessingBatch
             }
         }
         private int selected;
+        private const string prefer_selected = "prefer_ProcessingBehavierDrawer_selected";
 
         private void OnEnable()
         {
+            InitPrefer();
             InitProps();
             InitLists();
             InitItemList();
+        }
+        private void InitPrefer()
+        {
+            if (PlayerPrefs.HasKey(prefer_selected))
+            {
+                selected = PlayerPrefs.GetInt(prefer_selected);
+                if(options.Length <= selected)
+                {
+                    selected = 0;
+                }
+            }
         }
 
         private void InitProps()
@@ -74,8 +87,10 @@ namespace ProcessingBatch
         {
             groupsList.InitReorderList(groups_prop);
             groupsList.onProcessGroup = OnProcessGroup;
+            groupsList.onProcessAll = OnProcessAll;
         }
 
+       
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
@@ -108,6 +123,7 @@ namespace ProcessingBatch
             selected = GUILayout.Toolbar(selected, options);
             if (EditorGUI.EndChangeCheck())
             {
+                PlayerPrefs.SetInt(prefer_selected, selected);
                 InitItemList();
             }
 
@@ -144,7 +160,7 @@ namespace ProcessingBatch
         private void OnProcessGroup(string groupName)
         {
             var group = (target as ProcessingBehaiver).groups.Find(x => x.name == groupName);
-          
+
             if (logic_prop.objectReferenceValue != null)
             {
                 var logic = logic_prop.objectReferenceValue as ProcessingLogic;
@@ -156,7 +172,21 @@ namespace ProcessingBatch
             }
         }
 
-     
+        private void OnProcessAll()
+        {
+            var groups = (target as ProcessingBehaiver).groups;
+
+            if (logic_prop.objectReferenceValue != null)
+            {
+                var logic = logic_prop.objectReferenceValue as ProcessingLogic;
+                logic.ProcessingAll(groups);
+            }
+            else
+            {
+                Debug.Log("如需批量处理,请填入继承于ProcessingLogic的ScriptObject");
+            }
+        }
+
 
         private void ResetOptions()
         {

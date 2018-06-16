@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Name: NaviStaticSetter
   m_EditorClassIdentifier: 
   rules:
-  - key: "\u53EF\u884C\u8D70\u533A\u57DF"
-    area: 0
   - key: "\u4E0D\u53EF\u884C\u8D70\u533A\u57DF"
     area: 1
   - key: "\u8DF3\u8DC3\u533A\u57DF"
     area: 2
+  - key: "\u9053\u8DEF\u963B\u6321"
+    area: 1
+  - key: "\u53EF\u884C\u8D70\u533A\u57DF"
+    area: 0
+  - key: "\u53EF\u884C\u8D70\u8865\u4E01"
+    area: 0

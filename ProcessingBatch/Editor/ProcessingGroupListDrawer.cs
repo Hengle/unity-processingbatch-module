@@ -20,6 +20,7 @@ namespace ProcessingBatch
     {
         private Dictionary<int, ProcessingItemListDrawer> processItemListDic = new Dictionary<int, ProcessingItemListDrawer>();
         public UnityEngine.Events.UnityAction<string> onProcessGroup { get; set; }
+        public UnityEngine.Events.UnityAction onProcessAll { get; set; }
         protected override void DrawElementCallBack(Rect rect, int index, bool isActive, bool isFocused)
         {
             rect = ProcessingUtil.DrawBoxRect(rect, index.ToString());
@@ -72,6 +73,19 @@ namespace ProcessingBatch
         {
             base.DrawHeaderCallBack(rect);
             EditorGUI.LabelField(rect, "分组列表");
+
+            var btnRect = new Rect(rect.x + rect.width * 0.35f, rect.y, 20, EditorGUIUtility.singleLineHeight);
+            if (GUI.Button(btnRect, new GUIContent("p", "批量处理"), EditorStyles.miniButton))
+            {
+                if (onProcessAll != null)
+                {
+                    onProcessAll.Invoke();
+                }
+                else
+                {
+                    Debug.Log("如需批量处理,请填入继承于ProcessingLogic的ScriptObject");
+                }
+            }
         }
         public override void DoLayoutList()
         {

@@ -173,4 +173,12 @@ public class TagAndColliderSetter : ProcessingLogic
             }
         }
     }
+
+    public override void ProcessingAll(List<ProcessingGroup> groups)
+    {
+        foreach (var group in groups)
+        {
+            ProcessingGroup(group);
+        }
+    }
 }

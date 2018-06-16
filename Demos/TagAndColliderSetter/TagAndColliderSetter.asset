@@ -14,6 +14,54 @@ MonoBehaviour:
   rules:
   - matchKey: "\u5E73\u9762"
     setTag: 1
-    tag: "\u5E73\u9762"
-    primitiveType: 5
+    tag: Ground
+    primitiveType: 3
     addCollider: 1
+  - matchKey: "\u66F2\u9762"
+    setTag: 1
+    tag: Ground
+    primitiveType: 4
+    addCollider: 1
+  colliderCatchs:
+  - path: peijing_1/dimian
+    primitiveType: 3
+    center: {x: 0, y: 0, z: 0}
+    radius: 0
+    height: 0
+    direction: 0
+    size: {x: 251.09706, y: 218.93593, z: 0}
+  - path: qianlou_1/qianlouyiloudimian
+    primitiveType: 3
+    center: {x: 0, y: -0.90493226, z: -0.15}
+    radius: 0
+    height: 0
+    direction: 0
+    size: {x: 54.800003, y: 15.84, z: 0.3}
+  - path: colliders/navi01
+    primitiveType: 4
+    center: {x: 0, y: 0, z: 0}
+    radius: 0
+    height: 0
+    direction: 0
+    size: {x: 0, y: 0, z: 0}
+  - path: colliders/navi02
+    primitiveType: 4
+    center: {x: 0, y: 0, z: 0}
+    radius: 0
+    height: 0
+    direction: 0
+    size: {x: 0, y: 0, z: 0}
+  - path: colliders/navi03
+    primitiveType: 4
+    center: {x: 0, y: 0, z: 0}
+    radius: 0
+    height: 0
+    direction: 0
+    size: {x: 0, y: 0, z: 0}
+  - path: houlou_1/houloudimian
+    primitiveType: 3
+    center: {x: 18.623688, y: -1.0469794, z: -3.9240808}
+    radius: 0
+    height: 0
+    direction: 0
+    size: {x: 71.399994, y: 33.53388, z: 0.0000014305111}

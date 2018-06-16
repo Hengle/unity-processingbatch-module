@@ -104,7 +104,7 @@ namespace ProcessingBatch
                     ProcessingUtil.UpdateDragedObjectsFromFile(".prefab", dragedGameObjects);
                 }
             }
-            else if (Event.current.type == EventType.dragPerform && rect.Contains(Event.current.mousePosition))
+            else if (Event.current.type == EventType.DragPerform && rect.Contains(Event.current.mousePosition))
             {
                 foreach (var item in dragedGameObjects)
                 {
