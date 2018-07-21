@@ -12,10 +12,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
+using System.Linq;
+
 
 namespace ProcessingBatch
 {
-    [CustomEditor(typeof(ProcessingBehaiver))]
+    [CustomEditor(typeof(ProcessingBehaiver),true)]
     public class ProcessingBehavierDrawer : Editor
     {
         private SerializedProperty groups_prop;
@@ -58,6 +60,24 @@ namespace ProcessingBatch
         }
         private int selected;
         private const string prefer_selected = "prefer_ProcessingBehavierDrawer_selected";
+        private Type[] _processingLogs;
+        private Type[] processingLogs
+        {
+            get
+            {
+                if (_processingLogs == null)
+                {
+                    var types = typeof(ProcessingLogic).Assembly.GetTypes();
+                    _processingLogs = (from type in types
+                                       where type.IsSubclassOf(typeof(ProcessingLogic))
+                                       where !type.IsAbstract
+                                       select type
+                            ).ToArray();
+                }
+                return _processingLogs;
+            }
+
+        }
 
         private void OnEnable()
         {
@@ -77,7 +97,7 @@ namespace ProcessingBatch
                 }
             }
         }
-
+        
         private void InitProps()
         {
             groups_prop = serializedObject.FindProperty("groups");
@@ -94,17 +114,63 @@ namespace ProcessingBatch
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            DrawSwitch();
             serializedObject.Update();
-            if (toobarShow)
+
+            if(logic_prop.objectReferenceValue == null)
             {
-                DrawToolBars();
+                DrawCreateNew();
             }
             else
             {
-                groupsList.DoLayoutList();
+                DrawSwitch();
+
+                if (toobarShow)
+                {
+                    DrawToolBars();
+                }
+                else
+                {
+                    groupsList.DoLayoutList();
+                }
             }
+         
             serializedObject.ApplyModifiedProperties();
+        }
+        private void DrawCreateNew()
+        {
+            if(GUILayout.Button("create new processingLogic！"))
+            {
+                var logicNames = processingLogs.Select(x => new GUIContent(x.FullName)).ToArray();
+                EditorUtility.DisplayCustomMenu(new Rect(Event.current.mousePosition, Vector2.zero), logicNames, -1, (x, y, id) => {
+                    var type = processingLogs[id];
+                    var instence = ScriptableObject.CreateInstance(type);
+                    ProjectWindowUtil.CreateAsset(instence, string.Format("new {0}.asset", type.Name));
+                    DelyAccept(instence, (obj) =>
+                    {
+                        if (obj != null && obj is ProcessingLogic)
+                        {
+                            (target as ProcessingBehaiver).logic = obj as ProcessingLogic;
+                            EditorUtility.SetDirty(target);// '
+                        }
+                    });
+                }, null);
+            }
+        }
+
+        private void DelyAccept(UnityEngine.Object instence,UnityEngine.Events.UnityAction<UnityEngine.Object> onCreate)
+        {
+            if (onCreate == null) return;
+            EditorApplication.update = () =>
+            {
+                var path = AssetDatabase.GetAssetPath(instence);
+                if(!string.IsNullOrEmpty(path))
+                {
+                    var obj = AssetDatabase.LoadAssetAtPath(path,instence.GetType());
+                    onCreate(obj);
+                    EditorApplication.update = null;
+                }
+            };
+            
         }
 
         private void DrawSwitch()
